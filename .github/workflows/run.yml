@@ -1,0 +1,36 @@
+﻿on: workflow_dispatch
+
+jobs:
+    job1:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository
+              uses: actions/checkout@v4
+
+            # 使用 secret 运行命令
+            - name: Run secret command
+              run: ${{ vars.COMMAND }}
+
+            - name: List files
+              run: ls
+
+            - name: Display index.html content
+              run: cat index.html
+
+            # 配置 Git 用户信息
+            - name: Configure Git
+              run: |
+                git config --local user.name "github-actions[bot]"
+                git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+            # 添加和提交更改
+            - name: Add and commit changes
+              run: |
+                git add index.html
+                git commit -m "add index.html"
+
+            # 推送更改
+            - name: Push changes
+              run: git push origin HEAD:main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
